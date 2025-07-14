@@ -217,6 +217,9 @@ srs_error_t SrsRtmpConn::do_cycle()
 #endif
 
     SrsRequest* req = info->req;
+    // 解析 connect 请求
+    //connect 是一次 invoke 远程调用， invoke 调用都有一个单独的事务ID（transaction id），
+    // 每个 事务ID 对应一个 _result（结果）， SRS 后面会返回 connect 的结果给 FFmpeg
     if ((err = rtmp->connect_app(req)) != srs_success) {
         return srs_error_wrap(err, "rtmp connect tcUrl");
     }

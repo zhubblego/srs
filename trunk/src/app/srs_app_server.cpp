@@ -918,6 +918,7 @@ void SrsServer::stop()
     srs_trace("srs terminated");
 }
 
+// 这个可以说是 RTMP 服务的主协程，他主要负责一些杂七杂八的工作，例如重新加载配置。
 srs_error_t SrsServer::cycle()
 {
     srs_error_t err = srs_success;
@@ -1316,7 +1317,7 @@ srs_error_t SrsServer::do_on_tcp_client(ISrsListener* listener, srs_netfd_t& stf
 
     // Use connection manager to manage all the resources.
     srs_assert(resource);
-    conn_manager->add(resource);
+    conn_manager->add(resource); // conn_manager 是个重点变量，我们可以用它遍历所有的客户端连接出来
 
     // If connection is a resource to start, start a coroutine to handle it.
     // Note that conn is managed by conn_manager, so we don't need to free it.

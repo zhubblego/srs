@@ -295,6 +295,7 @@ void SrsTcpListener::close()
     srs_close_stfd(lfd);
 }
 
+// 个协程负责监听 1935 端口，等待 TCP 连接。如果你指定了多个 IP 端口，这里会有多个 SrsTcpListener::cycle() 协程的
 srs_error_t SrsTcpListener::cycle()
 {
     srs_error_t err = srs_success;
