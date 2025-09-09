@@ -1123,6 +1123,7 @@ srs_error_t SrsProtocol::read_message_header(SrsChunkStream* chunk, char fmt)
          */
         uint32_t chunk_extended_timestamp = (uint32_t)chunk->extended_timestamp;
         if (!is_first_chunk_of_msg && chunk_extended_timestamp > 0 && chunk_extended_timestamp != timestamp) {
+            // type3 跟在 0/1 后面如果 type3 解析处理来的扩展时间戳不对, 回退。不会修改 chunk->extended_timestamp
             in_buffer->skip(-4);
         } else {
             chunk->extended_timestamp = timestamp;
@@ -1142,6 +1143,8 @@ srs_error_t SrsProtocol::read_message_header(SrsChunkStream* chunk, char fmt)
     // 0x00ffffff), this value MUST be 16777215, and the 'extended
     // timestamp header' MUST be present. Otherwise, this value SHOULD be
     // the entire delta.
+
+    // 这里使用的是 chunk->extended_timestamp。排除了type3 回退的场景
     uint32_t timestamp = chunk->has_extended_timestamp ? chunk->extended_timestamp : chunk->header.timestamp_delta;
     if (fmt == RTMP_FMT_TYPE0) {
         // 6.1.2.1. Type 0
